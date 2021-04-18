@@ -13,3 +13,29 @@ class Profile(models.Model):
     def  __str__(self):
         return self.user.username
 
+@receiver(post_save, sender=User)
+def update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.Profile.post_save()
+
+
+class Post(models.Model):
+    image = models.ImageField(upload_to='posty')
+    name = models.CharField(max_length=40, blank=True)
+    caption = models.CharField(max_length=250, blank=True)
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    user = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, related_name='posts')
+    likes = models.ManyToManyField(User, related_name='likes', blank=True)
+
+
+    def __str__(self):
+        return self.name
+
+    
+    class Meta:
+        ordering = ['-pk']
+
+    
+
+
