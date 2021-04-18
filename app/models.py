@@ -37,5 +37,46 @@ class Post(models.Model):
         ordering = ['-pk']
 
     
+    def save_image(self):
+        self.save()
+
+    def get_absolute_url(self):
+        return f"/post/{self.id}"
+
+
+    def delete_image(self):
+        self.delete()
+
+    def __str__(self):
+        return self.name
+
+    def total_likes(self):
+        return self.likes.count()
+
+
+class Comment(models.Model):
+    comment = models.TextField()
+    post = models.ForeignKey(Post, on_delete=models.DO_NOTHING, related_name='comments')
+    user = models.ForeignKey(Profile, on_delete= models.DO_NOTHING,related_name='comments')
+    created = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.comment
+
+    class Meta:
+        ordering = ["-pk"]
+
+
+class Follow(models.Model):
+    following = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, related_name='following')
+    followers = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, related_name='followers')
+
+
+    def __str__(self):
+        return self.following
+
+
+
+    
 
 
