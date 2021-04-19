@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class PostForm(forms.ModelForm):
     class Meta:
-        models = Post
+        model = Post
         fields = ('image', 'name', 'caption')
 
 class SignUpForm(UserCreationForm):
