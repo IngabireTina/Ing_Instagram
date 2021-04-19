@@ -41,11 +41,11 @@ def signup(request):
             login(request, user)
             return redirect('home')
 
-        else: 
-            form = UserCreationForm()
-        return render(request, 'signup.html', {'form': form})
+    else: 
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})
 
-
+@login_required(login_url='login')
 def profile(request, username):
     images = request.user.profile.posts.all()
     if request.method == 'POST':
@@ -62,7 +62,7 @@ def profile(request, username):
     }
     return render(request, 'profile.html', context)
 
-
+@login_required(login_url='login')
 def user_profile(request, username):
     user_prof = get_object_or_404(User, username=username)
     if request.user == user_prof:
@@ -84,7 +84,7 @@ def user_profile(request, username):
     }
     return render(request, 'user_profile.html', context)      
 
-
+@login_required(login_url='login')
 def follow(request, pk):
     if request.method == 'GET':
         user = Profile.objects.get(pk=pk)
@@ -92,7 +92,8 @@ def follow(request, pk):
         follow.save()
         
     return redirect('user_profile', user.user.username)
-    
+
+@login_required(login_url='login')    
 def unfollow(request, pk):
     if request.method == 'GET':
         user_ = Profile.objects.get(pk=pk)
@@ -100,7 +101,7 @@ def unfollow(request, pk):
         unfollow.delete()
         return redirect('user_profile', user_.user.username)    
 
-
+@login_required(login_url='login')
 def comment(request, pk):
     image = get_object_or_404(Post, pk=pk)
     is_liked = False
@@ -162,6 +163,7 @@ class PostLikeAPIToggle(APIView):
         }
         return Response(data)
 
+@login_required(login_url='login')
 def like(request):
     # image = get_object_or_404(Post, id=request.POST.get('image_id'))
     image = get_object_or_404(Post, id=request.POST.get('id'))
