@@ -7,7 +7,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.generic import RedirectView
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
 # Create your views here.
 
 def home(request):
@@ -43,5 +45,20 @@ def signup(request):
         return render(request, 'signup.html', {'form': form})
 
 
-def profile(request, user)
+def profile(request, username):
+    images = request.user.profileImg.posts.all()
+    if request.method == 'POST':
+        prof_form = UpdateUserProfileForm(request.POST, request.FILES, instance=request.user.profileImg)
+        if prof_form.is_valid():
+            prof_form.save()
+            return redirect(request.path_info)
+    else:
+        prof_form = UpdateUserProfileForm(instance=request.user.profile)
+    context = {
+        'prof_form': prof_form,
+        'images': images,
+
+    }
+    return render(request, 'profile.html', context)
+
       
