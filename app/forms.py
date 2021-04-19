@@ -19,7 +19,7 @@ class UpdateUserProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['profileImg', 'bio',]
+        fields = ['profile', 'bio',]
 
 class CommentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

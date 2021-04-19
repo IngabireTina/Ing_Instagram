@@ -12,13 +12,14 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 # Create your views here.
 
+@login_required(login_url='login')
 def home(request):
     posts = Post.objects.all()
     users = User.objects.exclude(id=request.user.id)
     form = PostForm(request.POST or None, files=request.FILES)
     if form.is_valid():
         post = form.save(commit=False)
-        post.user = request.user.profileImg
+        post.user = request.user.profile
         post.save()
         return redirect('home')
     context = {
@@ -46,9 +47,9 @@ def signup(request):
 
 
 def profile(request, username):
-    images = request.user.profileImg.posts.all()
+    images = request.user.profile.posts.all()
     if request.method == 'POST':
-        prof_form = UpdateUserProfileForm(request.POST, request.FILES, instance=request.user.profileImg)
+        prof_form = UpdateUserProfileForm(request.POST, request.FILES, instance=request.user.profile)
         if prof_form.is_valid():
             prof_form.save()
             return redirect(request.path_info)
@@ -66,11 +67,11 @@ def user_profile(request, username):
     user_prof = get_object_or_404(User, username=username)
     if request.user == user_prof:
         return redirect('user_profile', username=request.user.username)
-    user_posts = user_prof.profileImg.posts.all()
-    followers = Follow.objects.filter(followers=user_prof.profileImg)
+    user_posts = user_prof.profile.posts.all()
+    followers = Follow.objects.filter(followers=user_prof.profile)
     follow_status = None
     for follower in followers:
-        if request.user.profileImg == follower.following:
+        if request.user.profile == follower.following:
 
             follow_status = True
         else:
@@ -87,7 +88,7 @@ def user_profile(request, username):
 def follow(request, pk):
     if request.method == 'GET':
         user = Profile.objects.get(pk=pk)
-        follow = Follow(following=request.user.profileImg, followers=user)
+        follow = Follow(following=request.user.profile, followers=user)
         follow.save()
         
     return redirect('user_profile', user.user.username)
@@ -95,7 +96,7 @@ def follow(request, pk):
 def unfollow(request, pk):
     if request.method == 'GET':
         user_ = Profile.objects.get(pk=pk)
-        unfollow= Follow.objects.filter(following=request.user.profileImg, followers=user_)
+        unfollow= Follow.objects.filter(following=request.user.profile, followers=user_)
         unfollow.delete()
         return redirect('user_profile', user_.user.username)    
 
@@ -110,7 +111,7 @@ def comment(request, pk):
         if form.is_valid():
             comment = form.save(commit=False)
             comment.post = image
-            comment.user = request.user.profileImg
+            comment.user = request.user.profile
             comment.save()
             return HttpResponseRedirect(request.path_info)
     else:

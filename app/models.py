@@ -6,9 +6,9 @@ from django.dispatch import receiver
 # Create your models here.
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True, default='my bio')
-    profileImg = models.ImageField('profy', default='a.png')
+    profile = models.ImageField('profy', default='a.png')
 
     def  __str__(self):
         return self.user.username
@@ -17,7 +17,7 @@ class Profile(models.Model):
 def update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-    instance.Profile.post_save()
+    instance.profile.save()
 
 
 class Post(models.Model):
@@ -25,7 +25,7 @@ class Post(models.Model):
     name = models.CharField(max_length=40, blank=True)
     caption = models.CharField(max_length=250, blank=True)
     date = models.DateTimeField(auto_now_add=True, null=True)
-    user = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, related_name='posts')
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts')
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
 
 
@@ -56,8 +56,8 @@ class Post(models.Model):
 
 class Comment(models.Model):
     comment = models.TextField()
-    post = models.ForeignKey(Post, on_delete=models.DO_NOTHING, related_name='comments')
-    user = models.ForeignKey(Profile, on_delete= models.DO_NOTHING,related_name='comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(Profile, on_delete= models.CASCADE,related_name='comments')
     created = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
