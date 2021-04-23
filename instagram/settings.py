@@ -11,10 +11,15 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+import django_heroku
+import dj_database_url
+from decouple import config,Csv
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+# BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -89,16 +94,47 @@ WSGI_APPLICATION = 'instagram.wsgi.application'
 # }
 
 DATABASES = {
-    'default': {
+        'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'insta',
         'USER': 'test',
         'PASSWORD': 'test1234',
         'HOST': 'localhost',
         'PORT': '5432',
+        }
+
     }
 
-}
+
+MODE=config("MODE", default="dev")
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+# ##development
+# if config('MODE')=="dev":
+
+#     DATABASES = {
+#         'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'insta',
+#         'USER': 'test',
+#         'PASSWORD': 'test1234',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#         }
+
+#     }
+# ##production
+# else:
+#     DATABASES = {
+#         'default': dj_database_url.config(
+#            default=config('DATABASE_URL')
+#        )
+#     }
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(db_from_env)
+
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 
 # Password validation
@@ -137,7 +173,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
