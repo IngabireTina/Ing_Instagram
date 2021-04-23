@@ -10,7 +10,7 @@ class TestProfile(TestCase):
         self.user = User(username='tina')
         self.user.save()
 
-        self.profile_test = Profile(id=1, name='image', profile_picture='a.jpg', bio='lol',
+        self.profile_test = Profile(id=1, profile_picture='a.jpg', bio='lol',
                                     user=self.user)
 
 
@@ -18,11 +18,11 @@ class TestProfile(TestCase):
 
 class TestPost(TestCase):
     def setUp(self):
-        self.profile_test = Profile(name='tina', user=User(username='tina'))
+        self.profile_test = Profile(bio='lol', user=User(username='tina'))
         self.profile_test.save()
 
         self.image_test = Post(image='a.png', name='test', caption='default test', user=self.profile_test)
-
+        
 
     def test_save_image(self):
         self.image_test.save_image()
